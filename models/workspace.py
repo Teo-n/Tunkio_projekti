@@ -11,12 +11,12 @@ def get_last_id():
 
 class Workspace:
 
-    def __init__(self, building, roomType, floor, roomNumber):
+    def __init__(self, building, room_type, floor, room_number):
         self.id = get_last_id()
         self.building = building
-        self.roomType = roomType
+        self.room_type = room_type
         self.floor = floor
-        self.roomNumber = roomNumber
+        self.room_number = room_number
 
         self.is_publish = False
 
@@ -25,7 +25,7 @@ class Workspace:
         return {
             'id': self.id,
             'building': self.building,
-            'roomType': self.roomType,
+            'room_type': self.room_type,
             'floor': self.floor,
-            'roomNumber': self.roomNumber
+            'roomNumber': self.room_number
         }
