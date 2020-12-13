@@ -1,3 +1,5 @@
+from extensions import db
+
 reservation_list = []
 
 
@@ -9,21 +11,15 @@ def get_last_id():
     return last_reservation.id + 1
 
 
-class Reservation:
+class Reservation(db.Model):
+    __tablename__ = 'reservation'
 
-    def __init__(self, date, time, client):
-        self.id = get_last_id()
-        self.date = date
-        self.time = time
-        self.client = client
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(100), nullable=False)
+    time = db.Column(db.String(200))
+    client = db.Column(db.Integer)
+    is_publish = db.Column(db.Boolean(), default=False)
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
 
-        self.is_publish = False
-
-    @property
-    def data(self):
-        return {
-            'id': self.id,
-            'date': self.date,
-            'time': self.time,
-            'client': self.client
-        }
+    user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))

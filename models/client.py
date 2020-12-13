@@ -1,3 +1,5 @@
+from extensions import db
+
 client_list = []
 
 
@@ -9,19 +11,14 @@ def get_last_id():
     return last_client.id + 1
 
 
-class Client:
+class Client(db.Model):
+    __tablename__ = 'client'
 
-    def __init__(self, name, email):
-        self.id = get_last_id()
-        self.name = name
-        self.email = email
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(200))
+    is_publish = db.Column(db.Boolean(), default=False)
+    created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
 
-        self.is_publish = False
-
-    @property
-    def data(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'email': self.email
-        }
+    user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
