@@ -47,9 +47,22 @@ class ClientResource(Resource):
             return {'message': 'client not found'}, HTTPStatus.NOT_FOUND
 
         client.name = data['name']
-        client.email = data['email']
+        client.description = data['description']
+        client.num_of_servings = data['num_of_servings']
+        client.cook_time = data['cook_time']
+        client.directions = data['directions']
 
         return client.data, HTTPStatus.OK
+
+    def delete(self, client_id):
+        client = next((client for client in client_list if client.id == client_id), None)
+
+        if client is None:
+            return {'message': 'client not found'}, HTTPStatus.NOT_FOUND
+
+        client_list.remove(client)
+
+        return {}, HTTPStatus.NO_CONTENT
 
 
 class ClientPublishResource(Resource):

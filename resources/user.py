@@ -1,19 +1,39 @@
-from flask_jwt_extended import jwt_optional, get_jwt_identity
+from flask import request
+from flask_restful import Resource
+from http import HTTPStatus
 
-class UserResource(Resource):
-    @jwt_optional
-    def get(self, username):
-        user = User.get_by_username(username=username)
+from resources.utils import hash_password
+from models.user import User
 
-        if user is None:
-            return {'message': 'user not found'}, HTTPStatus.NOT_FOUND
-        current_user = get_jwt_identity()
 
-        if current_user == user.id:
-            data = {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-            }
+class UserListResource(Resource):
+    def post(self):
+        json_data = request.get_json()
 
-        return data, HTTPStatus.OK
+        username = json_data.get('username')
+        email = json_data.get('email')
+        non_hash_password = json_data.get('password')
+
+        if User.get_by_username(username):
+            return {'message': 'username already used'}, HTTPStatus.BAD_REQUEST
+
+        if User.get_by_email(email):
+            return {'message': 'email already used'}, HTTPStatus.BAD_REQUEST
+
+        password = hash_password(non_hash_password)
+
+        user = User(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        user.save()
+
+        data = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email
+        }
+
+        return data, HTTPStatus.CREATED
