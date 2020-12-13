@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
 
-from resources.utils import hash_password
+from utils import hash_password
 from models.user import User
 
 

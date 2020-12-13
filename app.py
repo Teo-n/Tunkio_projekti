@@ -2,8 +2,8 @@ from flask import Flask
 from flask_restful import Api
 from flask_migrate import Migrate
 
-from resources.config import Config
-from resources.extensions import db
+from config import Config
+from extensions import db
 
 from resources.user import UserListResource
 from resources.token import TokenResource
@@ -40,7 +40,7 @@ def create_app():
 
 def register_extensions(app):
     db.init_app(app)
-    migrate = Migrate(app,db)
+    migrate = Migrate(app, db)
     # jwt.init_app(app)
 
 
