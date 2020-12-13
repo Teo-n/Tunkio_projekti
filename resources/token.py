@@ -4,7 +4,7 @@ from flask_restful import Resource
 from flask_jwt_extended import create_access_token
 
 from utils import check_password
-from models.user import User
+from models import User
 
 
 class TokenResource(Resource):

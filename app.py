@@ -6,7 +6,6 @@ from config import Config
 from extensions import db
 
 from resources.user import UserListResource
-from resources.token import TokenResource
 
 from resources.client import ClientListResource, ClientResource, ClientPublishResource
 from resources.reservation import ReservationListResource, ReservationResource, ReservationPublishResource
