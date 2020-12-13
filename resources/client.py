@@ -1,6 +1,8 @@
 from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
+from marshmallow import Schema, fields
+from utils import hash_password
 
 from models.client import Client, client_list
 
@@ -86,3 +88,13 @@ class ClientPublishResource(Resource):
         client.is_publish = False
 
         return {}, HTTPStatus.NO_CONTENT
+
+class SimpleSchema(Schema):
+
+    id = fields.Int(
+    username = fields.String(required=True),
+    password = fields.Method(required=True, deserialize='load_password'))
+    def load_password(self, value):
+        return hash_password(value)
+
+
