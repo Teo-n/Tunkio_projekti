@@ -18,6 +18,7 @@ class Reservation(db.Model):
     date = db.Column(db.String(100), nullable=False)
     time = db.Column(db.Integer(21))
     client = db.Column(db.String(100))
+    number_of_Reservations = db.Column(db.Integer(1))
     is_publish = db.Column(db.Boolean(), default=False)
     created_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now())
     updated_at = db.Column(db.DateTime(), nullable=False, server_default=db.func.now(), onupdate=db.func.now())
