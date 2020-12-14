@@ -1,7 +1,10 @@
 from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
+from marshmallow import Schema, fields
 from schemas.reservation import ReservationSchema
+from extensions import jwt
+
 
 from models.reservation import Reservation, reservation_list
 reservation_schema = ReservationSchema()
@@ -9,13 +12,14 @@ reservation_public_schema = ReservationSchema(exclude=('client',))
 reservation_list_schema = ReservationSchema(many=True)
 
 
+# Get and Post methods are defined
 class ReservationListResource(Resource):
 
     def get(self):
 
         reservation = Reservation.get_all_published()
 
-        return reservation_list_schema.dump(reservations).data, HTTPStatus.OK
+        return reservation_list_schema.dump(reservation).data, HTTPStatus.OK
 
     @jwt_required
     def post(self):
@@ -25,37 +29,34 @@ class ReservationListResource(Resource):
         data, errors = reservation_schema.load(data=json_data)
 
         if errors:
-            return {'message': 'Validation errors', 'errors': errors},HTTPStatus.BAD_REQUEST
+            return {'message': 'Validation errors', 'errors': errors}, HTTPStatus.BAD_REQUEST
 
-        id = json_data.get('id')
-        date = json_data.get('date')
-        time = json_data.get('time')
-
-        if reservation.get_by_id(data.get('id')):
+        if current_reservation.get_by_id(data.get('id')):
             return {'message': 'id already used'}, HTTPStatus.BAD_REQUEST
 
-        if reservation.get_by_date(data.get('date')):
+        if current_reservation.get_by_date(data.get('date')):
             return {'message': 'date not selectable'}, HTTPStatus.BAD_REQUEST
 
-        if reservation.get_by_time(data.get('time')):
+        if current_reservation.get_by_time(data.get('time')):
             return {'message': 'time not selectable'}, HTTPStatus.BAD_REQUEST
 
-        if reservation.get_by_number_of_Reservations(data.get('number_of_Reservations')):
+        if current_reservation.get_by_number_of_Reservations(data.get('number_of_Reservations')):
             return {'message': 'Already booked'}, HTTPStatus.BAD_REQUEST
 
-        reservation = reservation(**data)
+        reservation = current_reservation(**data)
         reservation.id = current_reservation
         reservation.save()
 
         return reservation_schema.dump(reservation).data, HTTPStatus.CREATED
 
 
+# Get and Put methods are defined
 class ReservationResource(Resource):
 
     @jwt_optional
     def get(self, reservation_id):
 
-        reservation = reservation.get_by_id(id=id)
+        reservation = Reservation.get_by_id(id=id)
 
         if reservation is None:
             return {'message': 'reservation not found'}, HTTPStatus.NOT_FOUND
@@ -86,6 +87,7 @@ class ReservationResource(Resource):
         return reservation.data, HTTPStatus.OK
 
 
+# Put and Delete methods are defined
 class ReservationPublishResource(Resource):
 
     def put(self, reservation_id):
@@ -109,10 +111,11 @@ class ReservationPublishResource(Resource):
         return {}, HTTPStatus.NO_CONTENT
 
 
+# Return data to schema dump (by id)
 class MeResource(Resource):
 
     @jwt_required
     def get(self):
-        reservation = reservation.get_by_id(id=get_jwt_identity())
+        reservation = Reservation.get_by_id(id=get_jwt_identity())
         return reservation_schema.dump(reservation).data, HTTPStatus.OK
 

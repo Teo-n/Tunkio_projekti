@@ -7,6 +7,7 @@ from utils import hash_password
 from models.client import Client, client_list
 
 
+# Get and Post methods defined
 class ClientListResource(Resource):
 
     def get(self):
@@ -30,6 +31,7 @@ class ClientListResource(Resource):
         return client.data, HTTPStatus.CREATED
 
 
+# Get, Put and Delete methods defined
 class ClientResource(Resource):
 
     def get(self, client_id):
@@ -67,6 +69,7 @@ class ClientResource(Resource):
         return {}, HTTPStatus.NO_CONTENT
 
 
+# Put and Delete methods defined
 class ClientPublishResource(Resource):
 
     def put(self, client_id):
@@ -89,11 +92,14 @@ class ClientPublishResource(Resource):
 
         return {}, HTTPStatus.NO_CONTENT
 
+
+# Hash password value returned to load_password function
 class SimpleSchema(Schema):
 
     id = fields.Int(
     username = fields.String(required=True),
     password = fields.Method(required=True, deserialize='load_password'))
+
     def load_password(self, value):
         return hash_password(value)
 

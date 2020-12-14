@@ -2,7 +2,6 @@ from extensions import db
 
 client_list = []
 
-
 def get_last_id():
     if client_list:
         last_client = client_list[-1]

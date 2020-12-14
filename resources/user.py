@@ -3,20 +3,20 @@ from flask_restful import Resource
 from http import HTTPStatus
 
 from utils import hash_password
-from models import User
+from models import client
 
 
-class UserListResource(Resource):
+class userListResource(Resource):
     def post(self):
         json_data = request.get_json()
 
         username = json_data.get('username')
         email = json_data.get('email')
 
-        if User.get_by_username(username):
+        if client.get_by_username(username):
             return {'message': 'username already used'}, HTTPStatus.BAD_REQUEST
 
-        if User.get_by_email(email):
+        if client.get_by_email(email):
             return {'message': 'email already used'}, HTTPStatus.BAD_REQUEST
 
 
@@ -33,10 +33,10 @@ class UserListResource(Resource):
         data = {
             'id': user.id,
             'username': user.username,
-            'email': user.email
+            'email': user.email,
+            'password': user.password
         }
         return data, HTTPStatus.CREATED
-
 
 
 
